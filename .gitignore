@@ -1,7 +1,3 @@
 #Binaries
 
 *.pyc
-
-# Cache Folders
-
-__pycache__/
