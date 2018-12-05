@@ -2,42 +2,56 @@ import sys
 
 class Command(object):
 
-    def __init__(self , use , short = None , long = None , run = None , arguments = 0):
+    def __init__(self , use , short = None , long = None , run = None):
         self.use = use
         self.short = short
         self.long = long
         self.run = run
-        self.arguments = arguments
         self.commands = []
         self.parent = None
+        self.arguments = 0
 
     def execute(self):
-        if self.run:
-            if self.arguments:
-                if not self.parent:
-                    self.run(sys.argv[self.arguments])
-                else:
-                    self.run(sys.argv[self.parent.arguments+self.arguments+1])
-            else:
-                self.run()
-        if self.short and not self.run and len(sys.argv) == 1:
-            print(self.short)
+        self.arguments = self.__parent_count()
 
-        if self.commands and len(sys.argv) == 1:
-            print("Available Commands            Usage")
-            for command in self.commands:
-                print("{}                     {}".format(command.use,command.short))
-        if len(sys.argv) > 1 and self.commands:
-            for command in self.commands:
-                if not self.parent:
-                    if command.use == sys.argv[1]:
-                        command.execute()
-                        break
-                else:
-                    if command.use == sys.argv[self.parent.arguments+1]:
-                        command.execute()
-                        break
+        self.__check_run()
+
+        self.__check_short()
+
+        self.__check_commands()
+
+        self.__check_sub_commands()
+
 
     def add_command(self , cmnd):
         cmnd.parent = self
         self.commands.append(cmnd)
+
+    def __parent_count(self):
+        count = 0
+        parent = self
+        while parent:
+            count += 1
+            parent = parent.parent
+        return count
+
+    def __check_run(self):
+        if self.run:
+            try:
+                self.run(self , sys.argv)
+            except Exception:
+                pass
+    def __check_short(self):
+        if self.short and not self.run and len(sys.argv) == self.arguments:
+            print(self.short + "\n\n\n")
+    def __check_commands(self):
+        if self.commands and len(sys.argv) == self.arguments:
+            print("Available Commands:")
+            for command in self.commands:
+                print("{}            {}".format(command.use,command.short))
+    def __check_sub_commands(self):
+        if len(sys.argv) > self.arguments and self.commands:
+            for command in self.commands:
+                if command.use == sys.argv[self.arguments]:
+                    command.execute()
+                    break

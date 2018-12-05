@@ -2,22 +2,35 @@ import sys
 import pikli
 
 
-def greet(*args):
-    print("Hello {} how are you".format(args[0]))
+def up_database(cmd , args):
+    print("Database Populated")
+def down_database(cmd , args):
+    print("Database Depopulated")
 
 root_command = pikli.Command(
         use = "hello",
         short = "Hello is the  first ever cli app made with pikli",
 )
 
-child_command = pikli.Command(
-        use = "greet",
-        short = "greets the user",
-        arguments = 1,
-        run = greet
+migration_command = pikli.Command(
+        use = "migration",
+        short = "Runs Database migrations"
+)
+up_command = pikli.Command(
+    use = "up",
+    short = "populates the database",
+    run = up_database
+)
+down_command = pikli.Command(
+    use = "down",
+    short = "depopulates the database",
+    run = down_database
 )
 
-root_command.add_command(child_command)
+migration_command.add_command(up_command)
+migration_command.add_command(down_command)
+
+root_command.add_command(migration_command)
 
 
 root_command.execute()
