@@ -12,6 +12,7 @@
 """
 
 import sys
+from .flag import Flag
 
 
 
@@ -30,6 +31,8 @@ class Command(object):
             parent (Command): the parent command
             arg_pos (int): number of parent commands to determine the argument
                            postion in terms of sys.argv
+            flag (Flag): the flag object that holds all the flags assigned
+                         to the command
 
 
         Example:
@@ -50,6 +53,7 @@ class Command(object):
         self.commands = []
         self.parent = None
         self.arg_pos = 0
+        self.flag = Flag()
 
     def execute(self):
 
@@ -65,6 +69,8 @@ class Command(object):
         """
 
         self.arg_pos = self.__parent_count()
+
+        self.__check_flags()
 
         self.__check_run()
 
@@ -99,6 +105,11 @@ class Command(object):
         cmnd.parent = self
         self.commands.append(cmnd)
 
+
+    def flags(self):
+        return self.flag
+
+
     def __parent_count(self):
 
         """ Calculates the number of parents in the whole chain & returns the
@@ -126,13 +137,13 @@ class Command(object):
         """ Checks for a short description & prints it"""
 
         if self.short and not self.run and len(sys.argv) == self.arg_pos: #if short description provided & nothing to run & no args
-            print(self.short + "\n\n\n")
+            print(self.short)
     def __check_available_commands(self):
 
         """ Checks for avaiable commands to display them"""
 
         if self.commands and len(sys.argv) == self.arg_pos:
-            print("Available Commands:")
+            print("\nAvailable Commands:")
             for command in self.commands:
                 print("{}            {}".format(command.use,command.short))
     def __check_sub_commands(self):
@@ -144,3 +155,10 @@ class Command(object):
                 if command.use == sys.argv[self.arg_pos]: #if the sub-command.use is the command provided
                     command.execute()
                     break
+    def __check_flags(self):
+
+        """ Checks for any flags to assign value to them """
+
+        for i , arg in enumerate(sys.argv[self.arg_pos:]): #using enumerate to get the index of the argument
+            if self.flag.is_flag(arg):
+                self.flag.assign_flag_value(arg , sys.argv[(self.arg_pos+i)+1])#sending the flag name with the value(they will be side by side)
