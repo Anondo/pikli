@@ -10,18 +10,6 @@
   This module implements all the classes required to create flags
   for a command.
 
-  Classes:
-
-    BaseP(object)
-
-    IntPFlag(BaseP)
-
-    StringPFlag(BaseP)
-
-    BoolPFlag(BaseP)
-
-    Flag(object)
-
 
 """
 
@@ -29,14 +17,8 @@
 
 
 
-
-
-
 import sys
 from .core import add_flag
-
-
-
 
 
 

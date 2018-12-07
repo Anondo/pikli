@@ -107,6 +107,9 @@ class Command(object):
 
 
     def flags(self):
+
+        """ returns the flag object that holds all the flags for the command """
+
         return self.flag
 
 
@@ -166,8 +169,3 @@ class Command(object):
                     self.flag.assign_flag_value(flag , True)#if the flag is bool,the value must be true
                 else:
                     self.flag.assign_flag_value(flag , sys.argv[(self.arg_pos+i)+1])#sending the flag with the value(they will be side by side)
-
-
-
-
-                    
