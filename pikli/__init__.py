@@ -28,4 +28,4 @@
 
 
 from . command import Command
-from . helper import *
+from . core import *

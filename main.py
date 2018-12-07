@@ -2,9 +2,11 @@ import pikli
 
 
 def start_server(cmd , args):
-    print("Hello {}".format(args[cmd.arg_pos]))
+    if pikli.get_bool("important"):
+        print("This command is very imporant")
     print("Http server started at {}".format(pikli.get_int("port")))
-    print("yoyo happening with {}".format(pikli.get_int("yo")))
+    if pikli.get_str("config"):
+        print("configuration file is at {}".format(pikli.get_str("config")))
 
 root_command = pikli.Command(
         use = "hello",
@@ -17,7 +19,8 @@ serve_command = pikli.Command(
     run = start_server
 )
 serve_command.flags().intp("port" , "p" , 2000 , "The Port to do things on")
-serve_command.flags().intp("yo" , "y" , 20 , "To do yoyo")
+serve_command.flags().stringp("config" , "c" , "" , "Configuration file to read the config from")
+serve_command.flags().boolp("important" , "i" , "Determines if important or not")
 
 root_command.add_command(serve_command)
 

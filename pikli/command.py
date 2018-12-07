@@ -160,5 +160,14 @@ class Command(object):
         """ Checks for any flags to assign value to them """
 
         for i , arg in enumerate(sys.argv[self.arg_pos:]): #using enumerate to get the index of the argument
-            if self.flag.is_flag(arg):
-                self.flag.assign_flag_value(arg , sys.argv[(self.arg_pos+i)+1])#sending the flag name with the value(they will be side by side)
+            flag = self.flag.get_flag(arg) #getting the actual flag
+            if flag:
+                if flag.get_type() == "bool":
+                    self.flag.assign_flag_value(flag , True)#if the flag is bool,the value must be true
+                else:
+                    self.flag.assign_flag_value(flag , sys.argv[(self.arg_pos+i)+1])#sending the flag with the value(they will be side by side)
+
+
+
+
+                    
