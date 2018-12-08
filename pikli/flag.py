@@ -212,3 +212,80 @@ class Flag(object):
                 print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))
             for flag in self.bool_flags:
                 print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))
+
+
+
+
+
+class PersistentFlag(object):
+
+    """
+        Creates a flag object that provides the creation of flags for a
+        command & all the child commands under it.
+
+        Attributes:
+
+            cmd (pikli.Command): the command using the persistent flag
+
+
+    """
+
+    def __init__(self , cmd):
+        self.cmd = cmd
+
+    def intp(self , flagname , flaguse , default , description):
+
+        """ creates a integer flag for the command & all the sub-commands
+
+            under it
+
+            See help(pikli.flag.BaseP) for the arguments
+         """
+
+        int_flag = IntPFlag(flagname ,"-" + flaguse , default , description)
+
+        self.cmd.flags().int_flags.append(int_flag)
+
+        for c in self.cmd.commands:
+            c.persistent_flags().intp(flagname , flaguse , default , description)
+
+
+        add_flag(int_flag) #dont worry about this, duplications will not be added 
+
+    def stringp(self , flagname , flaguse , default , description):
+
+        """ creates a string flag for the command & all the sub-commands
+
+            under it
+
+            See help(pikli.flag.BaseP) for the arguments
+         """
+
+        str_flag = StringPFlag(flagname ,"-" + flaguse , default , description)
+
+        self.cmd.flags().str_flags.append(str_flag)
+
+        for c in self.cmd.commands:
+            c.persistent_flags().stringp(flagname , flaguse , default , description)
+
+
+        add_flag(str_flag)
+
+    def boolp(self , flagname , flaguse , description , default = False):
+
+        """ creates a bool flag for the command & all the sub-commands
+
+            under it
+
+            See help(pikli.flag.BaseP) for the arguments
+         """
+
+        bool_flag = BoolPFlag(flagname ,"-" + flaguse , default , description)
+
+        self.cmd.flags().bool_flags.append(bool_flag)
+
+        for c in self.cmd.commands:
+            c.persistent_flags().boolp(flagname , flaguse , description , default)
+
+
+        add_flag(bool_flag)

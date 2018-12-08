@@ -31,6 +31,8 @@ def get_int(flag_name):
         if flag_name == flag.flag_name:
             return flag.default
 
+    return None
+
 
 def get_bool(flag_name):
 
@@ -44,6 +46,9 @@ def get_bool(flag_name):
     for flag in bool_flags:
         if flag_name == flag.flag_name:
             return flag.default
+
+
+    return None
 
 
 def get_str(flag_name):
@@ -60,6 +65,9 @@ def get_str(flag_name):
             return flag.default
 
 
+    return None
+
+
 
 def add_flag(flag):
 
@@ -72,10 +80,16 @@ def add_flag(flag):
 
 
     if flag.get_type() == "int":
+        if get_int(flag.flag_name): #this is to prevent duplicate data
+            return
         int_flags.append(flag)
     elif flag.get_type() == "str":
+        if get_str(flag.flag_name):
+            return
         str_flags.append(flag)
     elif flag.get_type() == "bool":
+        if get_bool(flag.flag_name):
+            return
         bool_flags.append(flag)
 
 

@@ -16,14 +16,24 @@ root_command = pikli.Command(
 serve_command = pikli.Command(
     use = "serve",
     short = "start the http server",
-    run = start_server
 )
-serve_command.flags().intp("port" , "p" , 2000 , "The Port to do things on")
-serve_command.flags().stringp("config" , "c" , "" , "Configuration file to read the config from")
-serve_command.flags().boolp("important" , "i" , "Determines if important or not")
+
+migration_command = pikli.Command(
+    use = "migrate",
+    short = "Runs database migrations",
+)
+
 
 
 root_command.add_command(serve_command)
+root_command.add_command(migration_command)
+
+
+root_command.persistent_flags().intp("port" , "p" , 2000 , "The Port to do things on")
+root_command.flags().stringp("config" , "c" , "" , "Configuration file to read the config from")
+root_command.persistent_flags().boolp("important" , "i" , "Determines if important or not")
+
+
 
 
 root_command.execute()

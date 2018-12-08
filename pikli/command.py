@@ -14,7 +14,7 @@
 import sys
 import collections
 
-from .flag import Flag
+from .flag import Flag , PersistentFlag
 
 
 
@@ -35,6 +35,10 @@ class Command(object):
                            postion in terms of self.argv
             flag (Flag): the flag object that holds all the flags assigned
                          to the command
+
+            persistent_flag (PersistentFlag): the persistent flag object that
+                                              helps create all the flags for
+                                              the command
 
             flag_collection (collections.namedtuple): a collection to store the
                                                       flag_use & value of that
@@ -61,6 +65,7 @@ class Command(object):
         self.parent = None
         self.arg_pos = 0
         self.flag = Flag()
+        self.persistent_flag = PersistentFlag(self)
         self.flag_collection = collections.namedtuple("flag" , ["flag_use" , "value"])
         self.argv = []
 
@@ -127,6 +132,11 @@ class Command(object):
         """ returns the flag object that holds all the flags for the command """
 
         return self.flag
+    def persistent_flags(self):
+
+        """ returns the flag object that holds all the persistent flags for the command """
+
+        return self.persistent_flag
 
 
     def __parent_count(self):
