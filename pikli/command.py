@@ -88,7 +88,11 @@ class Command(object):
 
         self.__check_short()
 
+        self.__check_long()
+
         self.__check_available_commands()
+
+        self.__check_available_flags()
 
         self.__check_sub_commands()
 
@@ -153,15 +157,32 @@ class Command(object):
 
         if self.short and not self.run and len(self.argv) == self.arg_pos: #if short description provided & nothing to run & no args
             print(self.short)
+
+    def __check_long(self):
+
+        """ Checks for a long description & prints it"""
+
+        if self.long and not self.run and len(self.argv) == self.arg_pos: #if long description provided & nothing to run & no args
+            print("\n" + self.long)
+
+
     def __check_available_commands(self):
 
         """ Checks for avaiable commands to display them"""
 
 
         if self.commands and len(self.argv) == self.arg_pos:
-            print("\nAvailable Commands:")
+            print("\n\nAvailable Commands:")
             for command in self.commands:
                 print("{}            {}".format(command.use,command.short))
+
+    def __check_available_flags(self):
+
+        """ Checks for avaiable flags to display them"""
+
+        if not self.run and len(self.argv) == self.arg_pos:
+            self.flag.show_flag_details()
+
     def __check_sub_commands(self):
 
         """ Checks for any sub commands from the cli for execution """

@@ -195,3 +195,20 @@ class Flag(object):
             flag.default = int(value)
         else:
             flag.default = value # TODO: a value parameter is provided for BoolPFlag, but the asisgned value is always True. Need to think about it
+
+
+    def show_flag_details(self):
+
+
+        """ Prints all the flag details if available """
+
+
+
+        if self.int_flags or self.str_flags or self.bool_flags:
+            print("\n\nFlags:")
+            for flag in self.int_flags:
+                print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))
+            for flag in self.str_flags:
+                print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))
+            for flag in self.bool_flags:
+                print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))

@@ -2,7 +2,6 @@ import pikli
 
 
 def start_server(cmd , args):
-    print("Hello {}".format(args[cmd.arg_pos]))
     if pikli.get_bool("important"):
         print("This command is very imporant")
     print("Http server started at {}".format(pikli.get_int("port")))
