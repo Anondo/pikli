@@ -12,6 +12,8 @@
 """
 
 import sys
+import collections
+
 from .flag import Flag
 
 
@@ -30,9 +32,14 @@ class Command(object):
             commands ([]Command): list of sub-commands
             parent (Command): the parent command
             arg_pos (int): number of parent commands to determine the argument
-                           postion in terms of sys.argv
+                           postion in terms of self.argv
             flag (Flag): the flag object that holds all the flags assigned
                          to the command
+
+            flag_collection (collections.namedtuple): a collection to store the
+                                                      flag_use & value of that
+                                                      flag
+            argv ([]sys.argv): a copy of sys.argv
 
 
         Example:
@@ -54,6 +61,8 @@ class Command(object):
         self.parent = None
         self.arg_pos = 0
         self.flag = Flag()
+        self.flag_collection = collections.namedtuple("flag" , ["flag_use" , "value"])
+        self.argv = []
 
     def execute(self):
 
@@ -67,6 +76,9 @@ class Command(object):
                 root_command.execute()
 
         """
+
+
+        self.argv = sys.argv[:]
 
         self.arg_pos = self.__parent_count()
 
@@ -132,20 +144,21 @@ class Command(object):
 
         if self.run:
             try:
-                self.run(self , sys.argv)
+                self.run(self , self.argv)
             except Exception:
                 pass  # TODO: Add explicit exceptions
     def __check_short(self):
 
         """ Checks for a short description & prints it"""
 
-        if self.short and not self.run and len(sys.argv) == self.arg_pos: #if short description provided & nothing to run & no args
+        if self.short and not self.run and len(self.argv) == self.arg_pos: #if short description provided & nothing to run & no args
             print(self.short)
     def __check_available_commands(self):
 
         """ Checks for avaiable commands to display them"""
 
-        if self.commands and len(sys.argv) == self.arg_pos:
+
+        if self.commands and len(self.argv) == self.arg_pos:
             print("\nAvailable Commands:")
             for command in self.commands:
                 print("{}            {}".format(command.use,command.short))
@@ -153,19 +166,94 @@ class Command(object):
 
         """ Checks for any sub commands from the cli for execution """
 
-        if len(sys.argv) > self.arg_pos and self.commands: #if sub-command sys.argv position is ok & sub-commands actually exists
+        if len(self.argv) > self.arg_pos and self.commands: #if sub-command self.argv position is ok & sub-commands actually exists
             for command in self.commands:
-                if command.use == sys.argv[self.arg_pos]: #if the sub-command.use is the command provided
+                if command.use == self.argv[self.arg_pos]: #if the sub-command.use is the command provided
                     command.execute()
                     break
+
+
+    def __get_isolated_flags(self , flag_list):
+
+
+        """
+
+           Parses the flags with along with their values from the argv list.
+
+           Args:
+                flag_list ([]flag_collection): a list of flag_collection
+
+        """
+
+
+        for i , arg in enumerate(self.argv):
+            if arg[0] == "-":
+                if len(self.argv) == i+1 or self.argv[i+1][0] == "-": #if the flag doesnt have a value next to it i.e bool flag
+                    flag_list.append(self.flag_collection(arg , True))
+                    self.argv.pop(i)
+                    self.__get_isolated_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
+                else:
+                    flag_list.append(self.flag_collection(arg , self.argv[i+1]))
+                    self.argv.pop(i)
+                    self.argv.pop(i) #after popping the value index becomes the current index
+                    self.__get_isolated_flags(flag_list)
+
+    def __get_valid_flags(self , flag_list):
+
+        """
+
+            Parses the flags which only belongs to the current command.
+
+            Args:
+                flag_list ([]flag_collection): a list of flag_collection
+
+        """
+
+        for i , flag in enumerate(flag_list):
+            if not self.flag.get_flag(flag.flag_use):#if flag doesnt belong to this command, pop it
+                flag_list.pop(i)
+
+    def __get_isolated_valid_flags(self):
+
+        """
+
+            Parses just the flags with their values along with the valid ones
+            which only belongs to this command. This is done to remove restrictions
+            regarding arguments. For example:
+
+            Before this was added, there was a restriction of using argments
+            just after the command name:
+                [command] [arg1] [args] [flags....]
+
+            After adding this, users can provide the args wherever they want:
+                [command] [flag1] [flag1-value] [arg1] [flag2] [flag2-value] [arg2]
+
+
+
+            Returns:
+                flags: a list of flag_collection
+
+        """
+
+        flags = []
+
+        self.__get_isolated_flags(flags)
+        self.__get_valid_flags(flags)
+
+
+        return flags
+
+
     def __check_flags(self):
 
         """ Checks for any flags to assign value to them """
 
-        for i , arg in enumerate(sys.argv[self.arg_pos:]): #using enumerate to get the index of the argument
-            flag = self.flag.get_flag(arg) #getting the actual flag
+        flag_nv_list = self.__get_isolated_valid_flags()
+
+        for f in flag_nv_list:
+            flag = self.flag.get_flag(f.flag_use)
             if flag:
                 if flag.get_type() == "bool":
                     self.flag.assign_flag_value(flag , True)#if the flag is bool,the value must be true
                 else:
-                    self.flag.assign_flag_value(flag , sys.argv[(self.arg_pos+i)+1])#sending the flag with the value(they will be side by side)
+                    self.flag.assign_flag_value(flag , f.value)#sending the flag with the value(they will be side by side)
