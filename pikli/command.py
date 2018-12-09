@@ -159,8 +159,8 @@ class Command(object):
         if self.run:
             try:
                 self.run(self , self.argv)
-            except Exception:
-                pass  # TODO: Add explicit exceptions
+            except Exception as Argument:
+                print("ValueError: ", Argument)  # TODO: Add explicit exceptions
     def __check_short(self):
 
         """ Checks for a short description & prints it"""
@@ -201,7 +201,8 @@ class Command(object):
             for command in self.commands:
                 if command.use == self.argv[self.arg_pos]: #if the sub-command.use is the command provided
                     command.execute()
-                    break
+                    return
+            print("CommandError: No such commands")
 
 
     def __get_isolated_flags(self , flag_list):

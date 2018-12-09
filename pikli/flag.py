@@ -250,7 +250,7 @@ class PersistentFlag(object):
             c.persistent_flags().intp(flagname , flaguse , default , description)
 
 
-        add_flag(int_flag) #dont worry about this, duplications will not be added 
+        add_flag(int_flag) #dont worry about this, duplications will not be added
 
     def stringp(self , flagname , flaguse , default , description):
 

@@ -10,6 +10,10 @@
 
 """
 
+
+import os
+
+
 #--------------Functions For Flag--------------#
 
 #global list of flags
@@ -94,3 +98,41 @@ def add_flag(flag):
 
 
 #------------------------X---------------------------#
+
+#------Functions For Environmental Variables------#
+
+def get_str_env(envname):
+
+    """
+
+        Gets the string value of a environmental variable.
+
+        Args:
+            envname (str): name of the environmental variable
+
+        Returns:
+            os.environ.get(envname , None): the value of the environmental
+                                            variable
+
+    """
+
+    return os.environ.get(envname , None)
+
+def get_int_env(envname):
+
+    """
+
+        Gets the int value of a environmental variable.
+
+        Args:
+            envname (str): name of the environmental variable
+
+        Returns:
+            os.environ.get(envname , 0): the value of the environmental
+                                         variable
+
+    """
+
+    return int(os.environ.get(envname , 0))
+
+#---------------------X-------------------#
