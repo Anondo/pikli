@@ -23,6 +23,58 @@ from .core import add_flag
 
 
 
+
+
+
+class HelpFlag(object):
+
+    def __init__(self , cmd):
+        self.flag_name = "help"
+        self.flag_use = "-h"
+        self.flag_description = "Shows info regarding the command"
+        self.cmd = cmd
+
+    def execute(self):
+
+        self.__check_short()
+        self.__check_long()
+        self.__check_available_commands()
+        self.__check_available_flags()
+
+
+    def __check_short(self):
+
+        """ Checks for a short description & prints it"""
+
+        if self.cmd.short: #if short description provided
+            print(self.cmd.short)
+
+    def __check_long(self):
+
+        """ Checks for a long description & prints it"""
+
+        if self.cmd.long: #if long description provided
+            print("\n" + self.cmd.long)
+
+
+    def __check_available_commands(self):
+
+        """ Checks for avaiable commands to display them"""
+
+
+        if self.cmd.commands: #if commands are available
+            print("\n\nAvailable Commands:")
+            for command in self.cmd.commands:
+                print("{}            {}".format(command.use,command.short))
+
+    def __check_available_flags(self):
+
+        """ Checks for avaiable flags to display them"""
+
+        self.cmd.flag.show_flag_details(self)
+
+
+
 class BaseP(object):
 
 
@@ -121,6 +173,8 @@ class Flag(object):
         self.str_flags = []
         self.bool_flags = []
 
+
+
     def intp(self , flagname , flaguse , default , description):
 
         """ creates a integer flag for the command
@@ -165,6 +219,7 @@ class Flag(object):
 
         """
 
+
         for f in self.int_flags:
             if flag_use == f.flag_use:
                 return f
@@ -197,15 +252,15 @@ class Flag(object):
             flag.default = value # TODO: a value parameter is provided for BoolPFlag, but the asisgned value is always True. Need to think about it
 
 
-    def show_flag_details(self):
+    def show_flag_details(self , help):
 
 
         """ Prints all the flag details if available """
 
-
+        print("\n\nFlags:")
+        print("{}, --{}                {}".format(help.flag_use , help.flag_name , help.flag_description))
 
         if self.int_flags or self.str_flags or self.bool_flags:
-            print("\n\nFlags:")
             for flag in self.int_flags:
                 print("{}, --{} {}               {}".format(flag.flag_use , flag.flag_name , flag.type  , flag.description))
             for flag in self.str_flags:

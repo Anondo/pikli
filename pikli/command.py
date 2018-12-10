@@ -14,7 +14,7 @@
 import sys
 import collections
 
-from .flag import Flag , PersistentFlag
+from .flag import Flag , PersistentFlag , HelpFlag
 
 
 
@@ -69,6 +69,8 @@ class Command(object):
         self.flag_collection = collections.namedtuple("flag" , ["flag_use" , "value"])
         self.argv = []
 
+        self.help_flag = HelpFlag(self)
+
     def execute(self):
 
         """ Performs the execution of the command
@@ -87,19 +89,17 @@ class Command(object):
 
         self.arg_pos = self.__parent_count()
 
-        self.__check_flags()
+        if not self.__help_flag():
 
-        self.__check_run()
 
-        self.__check_short()
+            self.__check_flags()
 
-        self.__check_long()
+            self.__check_run()
 
-        self.__check_available_commands()
+            self.__check_sub_commands()
 
-        self.__check_available_flags()
-
-        self.__check_sub_commands()
+        if not self.run and len(self.argv) == self.arg_pos:#if nothing to run & no args
+            self.help_flag.execute() #then show help
 
 
     def add_command(self , cmnd):
@@ -152,6 +152,37 @@ class Command(object):
             parent = parent.parent
         return count
 
+    def __help_flag(self):
+        help_flag_found = False
+        own_help_flag = True
+
+        for arg in self.argv[self.arg_pos - 1 : ]:
+            if arg == "-h":
+                help_flag_found = True
+                break
+            for cmnd in self.commands:
+                if arg == cmnd.use:
+                    own_help_flag  = False
+                    break
+            if not own_help_flag:
+                break
+
+        if help_flag_found:
+            self.help_flag.execute()
+            return True
+        return False
+
+
+        print(flags)
+
+        for flag in flags:
+            if flag == "-h":
+                if flag.cmd.use == self.use:
+                    self.help_flag.execute()
+                    return True
+        return False
+
+
     def __check_run(self):
 
         """ Checks for a run method & acts accordingly """
@@ -161,37 +192,7 @@ class Command(object):
                 self.run(self , self.argv)
             except Exception as Argument:
                 print("ValueError: ", Argument)  # TODO: Add explicit exceptions
-    def __check_short(self):
 
-        """ Checks for a short description & prints it"""
-
-        if self.short and not self.run and len(self.argv) == self.arg_pos: #if short description provided & nothing to run & no args
-            print(self.short)
-
-    def __check_long(self):
-
-        """ Checks for a long description & prints it"""
-
-        if self.long and not self.run and len(self.argv) == self.arg_pos: #if long description provided & nothing to run & no args
-            print("\n" + self.long)
-
-
-    def __check_available_commands(self):
-
-        """ Checks for avaiable commands to display them"""
-
-
-        if self.commands and len(self.argv) == self.arg_pos:
-            print("\n\nAvailable Commands:")
-            for command in self.commands:
-                print("{}            {}".format(command.use,command.short))
-
-    def __check_available_flags(self):
-
-        """ Checks for avaiable flags to display them"""
-
-        if not self.run and len(self.argv) == self.arg_pos:
-            self.flag.show_flag_details()
 
     def __check_sub_commands(self):
 
@@ -217,7 +218,6 @@ class Command(object):
 
         """
 
-
         for i , arg in enumerate(self.argv):
             if arg[0] == "-":
                 if len(self.argv) == i+1 or self.argv[i+1][0] == "-": #if the flag doesnt have a value next to it i.e bool flag
@@ -229,6 +229,7 @@ class Command(object):
                     self.argv.pop(i)
                     self.argv.pop(i) #after popping the value index becomes the current index
                     self.__get_isolated_flags(flag_list)
+
 
     def __get_valid_flags(self , flag_list):
 
@@ -281,6 +282,7 @@ class Command(object):
         """ Checks for any flags to assign value to them """
 
         flag_nv_list = self.__get_isolated_valid_flags()
+
 
         for f in flag_nv_list:
             flag = self.flag.get_flag(f.flag_use)

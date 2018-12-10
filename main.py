@@ -16,7 +16,7 @@ serve = pikli.Command(
     run = start_server
 )
 
-serve.flags().intp("port" , "p" , "asas" , "the port to start the server")
+serve.flags().intp("port" , "p" , 0 , "the port to start the server")
 
 root.add_command(serve)
 
