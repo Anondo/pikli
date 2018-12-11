@@ -45,6 +45,8 @@ class Command(object):
                                                       flag
             argv ([]sys.argv): a copy of sys.argv
 
+            help_flag (HelpFlag): the help flag
+
 
         Example:
 

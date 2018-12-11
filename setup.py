@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pikli",
-    version="0.0.1",
+    version="1.0",
     author="Ahmad Anondo",
     author_email="aanondos@gmail.com",
     description="A package to create cli apps",
