@@ -151,35 +151,55 @@ class Command(object):
             count += 1
             parent = parent.parent
         return count
+    def __is_sub_command(self ,arg):
+
+        """
+
+            Determines if the argument provided is a sub-command or not
+
+            Args:
+                arg (str): a command line argument
+
+            Returns:
+                True/False (bool)
+
+        """
+
+        for cmnd in self.commands:
+            if arg == cmnd.use:
+                return True
+        return False
 
     def __help_flag(self):
+
+
+        """
+
+            determines if help flag for the command is provided or not
+
+            Returns:
+                True/False
+
+        """
+
+
         help_flag_found = False
         own_help_flag = True
 
         for arg in self.argv[self.arg_pos - 1 : ]:
-            if arg == "-h":
+            if arg == "-h": #looking for any help flags
                 help_flag_found = True
+                self.argv.pop(self.argv.index(arg))
                 break
-            for cmnd in self.commands:
-                if arg == cmnd.use:
-                    own_help_flag  = False
-                    break
+            if self.__is_sub_command(arg): #looking for any other commands before the help flag
+                own_help_flag  = False    #which determines if the help flag belongs to this command or not
+                break
             if not own_help_flag:
                 break
 
         if help_flag_found:
             self.help_flag.execute()
             return True
-        return False
-
-
-        print(flags)
-
-        for flag in flags:
-            if flag == "-h":
-                if flag.cmd.use == self.use:
-                    self.help_flag.execute()
-                    return True
         return False
 
 
@@ -220,7 +240,7 @@ class Command(object):
 
         for i , arg in enumerate(self.argv):
             if arg[0] == "-":
-                if len(self.argv) == i+1 or self.argv[i+1][0] == "-": #if the flag doesnt have a value next to it i.e bool flag
+                if len(self.argv) == i+1 or self.argv[i+1][0] == "-"or self.__is_sub_command(self.argv[i+1]): #if the flag doesnt have a value next to it i.e bool flag
                     flag_list.append(self.flag_collection(arg , True))
                     self.argv.pop(i)
                     self.__get_isolated_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
@@ -229,7 +249,6 @@ class Command(object):
                     self.argv.pop(i)
                     self.argv.pop(i) #after popping the value index becomes the current index
                     self.__get_isolated_flags(flag_list)
-
 
     def __get_valid_flags(self , flag_list):
 
