@@ -2,6 +2,7 @@ import pikli
 
 
 def start_server(cmd , args):
+    print("Hello {}".format(args[cmd.arg_pos] + args[cmd.arg_pos+1]))
     if pikli.get_bool("verbose"):
         print("Showing details")
     print("Server starting at: {}".format(pikli.get_int("port")))

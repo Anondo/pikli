@@ -241,8 +241,11 @@ class Command(object):
         """
 
         for i , arg in enumerate(self.argv):
+            if self.__is_sub_command(arg):#if a sub command is detected
+                break   #then it means no more flags for this command
             if arg[0] == "-":
                 if len(self.argv) == i+1 or self.argv[i+1][0] == "-"or self.__is_sub_command(self.argv[i+1]): #if the flag doesnt have a value next to it i.e bool flag
+                    print("yes") # TODO: sub command is not parsing parent boot flag, need to fix this
                     flag_list.append(self.flag_collection(arg , True))
                     self.argv.pop(i)
                     self.__get_isolated_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
