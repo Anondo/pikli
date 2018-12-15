@@ -228,7 +228,7 @@ class Command(object):
             print("CommandError: No such commands")
 
 
-    def __get_isolated_flags(self , flag_list):
+    def __parse_flags(self , flag_list):
 
 
         """
@@ -244,33 +244,20 @@ class Command(object):
             if self.__is_sub_command(arg):#if a sub command is detected
                 break   #then it means no more flags for this command
             if arg[0] == "-":
-                if len(self.argv) == i+1 or self.argv[i+1][0] == "-"or self.__is_sub_command(self.argv[i+1]): #if the flag doesnt have a value next to it i.e bool flag
-                    print("yes") # TODO: sub command is not parsing parent boot flag, need to fix this
-                    flag_list.append(self.flag_collection(arg , True))
-                    self.argv.pop(i)
-                    self.__get_isolated_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
-                else:
-                    flag_list.append(self.flag_collection(arg , self.argv[i+1]))
-                    self.argv.pop(i)
-                    self.argv.pop(i) #after popping the value index becomes the current index
-                    self.__get_isolated_flags(flag_list)
+                flag = self.flag.get_flag(arg)
+                if flag:
+                    if flag.get_type() == "bool":
+                        flag_list.append(self.flag_collection(arg , True))
+                        self.argv.pop(i)
+                        self.__parse_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
+                    else:
+                        flag_list.append(self.flag_collection(arg , self.argv[i+1]))
+                        self.argv.pop(i)
+                        self.argv.pop(i) #after popping the value index becomes the current index
+                        self.__parse_flags(flag_list)
 
-    def __get_valid_flags(self , flag_list):
 
-        """
-
-            Parses the flags which only belongs to the current command.
-
-            Args:
-                flag_list ([]flag_collection): a list of flag_collection
-
-        """
-
-        for i , flag in enumerate(flag_list):
-            if not self.flag.get_flag(flag.flag_use):#if flag doesnt belong to this command, pop it
-                flag_list.pop(i)
-
-    def __get_isolated_valid_flags(self):
+    def __parse_valid_flags(self):
 
         """
 
@@ -294,8 +281,7 @@ class Command(object):
 
         flags = []
 
-        self.__get_isolated_flags(flags)
-        self.__get_valid_flags(flags)
+        self.__parse_flags(flags)
 
 
         return flags
@@ -305,7 +291,7 @@ class Command(object):
 
         """ Checks for any flags to assign value to them """
 
-        flag_nv_list = self.__get_isolated_valid_flags()
+        flag_nv_list = self.__parse_valid_flags()
 
 
         for f in flag_nv_list:
