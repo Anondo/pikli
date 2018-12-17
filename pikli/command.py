@@ -265,18 +265,24 @@ class Command(object):
         for i , arg in enumerate(self.argv):
             if self.__is_sub_command(arg):#if a sub command is detected
                 break   #then it means no more flags for this command
-            if arg[0] == "-":
+            if arg[0] == "-": #every flag starts with -
                 flag = self.flag.get_flag(arg)
+                try:
+                    assert (flag) , "Unknown flag '{}' for command '{}'".format(arg , self.use)
+                except AssertionError as e:
+                    print("Flag Error: {}".format(e))
                 if flag:
                     if flag.get_type() == "bool":
                         flag_list.append(self.flag_collection(arg , True))
                         self.argv.pop(i)
                         self.__parse_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
+                        break # break to stop the loop from iterating after recurssion occurs because its not needed
                     else:
                         flag_list.append(self.flag_collection(arg , self.argv[i+1]))#assigning the flag with its value
                         self.argv.pop(i)
                         self.argv.pop(i) #after popping the value index becomes the current index
                         self.__parse_flags(flag_list)
+                        break
 
 
     def __parse_valid_flags(self):

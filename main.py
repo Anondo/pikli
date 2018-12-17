@@ -2,19 +2,15 @@ import pikli
 
 
 def start_server(args):
-    print("Hello {}".format(args[0] + args[1]))
     if pikli.get_bool("verbose"):
         print("Showing details")
     print("Server starting at: {}".format(pikli.get_int("port")))
 
-def greeter(args):
-    print("Hi {}".format(args[0]))
 
 
 root = pikli.Command(
     use = "hello",
     short = "test cli app",
-    run = greeter
 )
 
 serve = pikli.Command(
