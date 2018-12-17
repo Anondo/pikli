@@ -31,7 +31,8 @@ class Command(object):
             run (str): the method to run when the command is executed
             commands ([]Command): list of sub-commands
             parent (Command): the parent command
-            arg_pos (int): number of parent commands to determine the argument
+            pos (int): absolute position relative to parent
+            parents (int): number of parent commands to determine the argument
                            postion in terms of self.argv
             flag (Flag): the flag object that holds all the flags assigned
                          to the command
@@ -65,7 +66,8 @@ class Command(object):
         self.run = run
         self.commands = []
         self.parent = None
-        self.arg_pos = 0
+        self.pos = 0
+        self.parents = 0
         self.flag = Flag()
         self.persistent_flag = PersistentFlag(self)
         self.flag_collection = collections.namedtuple("flag" , ["flag_use" , "value"])
@@ -86,10 +88,14 @@ class Command(object):
 
         """
 
+        self.parents = self.__parent_count()
 
-        self.argv = sys.argv[:]
+        self.pos = self.parents - 1
 
-        self.arg_pos = self.__parent_count()
+        self.argv = sys.argv[self.pos:]
+
+        self.__clean_argv()
+
 
         if not self.__help_flag():
 
@@ -100,7 +106,7 @@ class Command(object):
 
             self.__check_sub_commands()
 
-        if not self.run and len(self.argv) == self.arg_pos:#if nothing to run & no args
+        if not self.run and len(self.argv) == self.pos:#if nothing to run & no args
             self.help_flag.execute() #then show help
 
 
@@ -153,6 +159,15 @@ class Command(object):
             count += 1
             parent = parent.parent
         return count
+    def __clean_argv(self):
+
+        """
+
+            Strips the argv list of any unwanted values. Specially, parent flags
+
+        """
+        while self.argv[0] != self.use and self.argv[0] != sys.argv[0]:#while there are unwanted values at the start of the list && not parent(because if parent, the starting value would be the script name)
+            self.argv.pop(0)
     def __is_sub_command(self ,arg):
 
         """
@@ -188,7 +203,7 @@ class Command(object):
         help_flag_found = False
         own_help_flag = True
 
-        for arg in self.argv[self.arg_pos - 1 : ]:
+        for arg in self.argv[self.pos: ]:
             if arg == "-h": #looking for any help flags
                 help_flag_found = True
                 self.argv.pop(self.argv.index(arg))
@@ -211,7 +226,7 @@ class Command(object):
 
         if self.run:
             try:
-                self.run(self , self.argv)
+                self.run(self.argv[1:]) # sending the list from index 1 because the first value is the command name
             except Exception as Argument:
                 print("ValueError: ", Argument)  # TODO: Add explicit exceptions
 
@@ -220,9 +235,16 @@ class Command(object):
 
         """ Checks for any sub commands from the cli for execution """
 
-        if len(self.argv) > self.arg_pos and self.commands: #if sub-command self.argv position is ok & sub-commands actually exists
+        sub_command_provided = False
+
+        for arg in self.argv:
+            if self.__is_sub_command(arg):
+                sub_command_provided = True
+                break
+
+        if self.commands and sub_command_provided: #if sub-command self.argv position is ok & sub-commands actually exists
             for command in self.commands:
-                if command.use == self.argv[self.arg_pos]: #if the sub-command.use is the command provided
+                if command.use in self.argv: #if the sub-command.use is the command provided
                     command.execute()
                     return
             print("CommandError: No such commands")
@@ -251,7 +273,7 @@ class Command(object):
                         self.argv.pop(i)
                         self.__parse_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
                     else:
-                        flag_list.append(self.flag_collection(arg , self.argv[i+1]))
+                        flag_list.append(self.flag_collection(arg , self.argv[i+1]))#assigning the flag with its value
                         self.argv.pop(i)
                         self.argv.pop(i) #after popping the value index becomes the current index
                         self.__parse_flags(flag_list)
