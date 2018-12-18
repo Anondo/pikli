@@ -92,7 +92,7 @@ class Command(object):
 
         self.pos = self.parents - 1
 
-        self.argv = sys.argv[self.pos:]
+        self.argv = sys.argv[self.pos:] #starting index from self.pos because, nothing before the command is needed(i.e parents)
 
         self.__clean_argv()
 
@@ -226,8 +226,8 @@ class Command(object):
         if self.run:
             try:
                 self.run(self.argv[1:]) # sending the list from index 1 because the first value is the command name
-            except Exception as Argument:
-                print("ValueError: ", Argument)  # TODO: Add explicit exceptions
+            except Exception:
+                print("Run Error: Something wrong with the run function, check the arguments")  # TODO: Add explicit exceptions
 
 
     def __check_sub_commands(self):
@@ -246,7 +246,7 @@ class Command(object):
                 if command.use in self.argv: #if the sub-command.use is the command provided
                     command.execute()
                     return
-            print("CommandError: No such commands")
+            print("Command Error: No such commands")
 
 
     def __parse_flags(self , flag_list):
