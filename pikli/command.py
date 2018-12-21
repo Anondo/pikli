@@ -105,7 +105,7 @@ class Command(object):
 
             self.__check_sub_commands()
 
-        if not self.run and len(self.argv) == self.parents:#if nothing to run & no args
+        if not self.run and len(self.argv) == 1:#if nothing to run & no args
             self.help_flag.execute() #then show help
 
 
