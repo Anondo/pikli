@@ -202,8 +202,8 @@ class Command(object):
         help_flag_found = False
         own_help_flag = True
 
-        for arg in self.argv[self.pos: ]:
-            if arg == "-h": #looking for any help flags
+        for arg in self.argv[1:]: #iterating from index 1 because, the first index is the command itself
+            if arg == "-h" or arg == "--help": #looking for any help flags
                 help_flag_found = True
                 self.argv.pop(self.argv.index(arg))
                 break
