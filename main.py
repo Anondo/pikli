@@ -3,6 +3,8 @@ import pikli
 
 
 def start_server(args):
+    if pikli.get_bool("verbose"):
+        print("Showing details")
     print("server running at http://localhost:{}".format(pikli.get_int("port")))
 
 def up(args):
@@ -44,5 +46,7 @@ migration_command.add_command(down_command)
 
 root_command.add_command(serve_command)
 root_command.add_command(migration_command)
+
+root_command.flags().boolp("verbose" , "v" , "shows details")
 
 root_command.execute()
