@@ -38,8 +38,14 @@ class HelpFlag(object):
 
         self.__check_short()
         self.__check_long()
+        self.__show_usage()
         self.__check_available_commands()
         self.__check_available_flags()
+
+
+    def __show_usage(self):
+        print("\n\nUsage:")
+        print("\t{} [args] [flags] [sub commands]".format(self.cmd.use))
 
 
     def __check_short(self):
