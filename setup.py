@@ -8,7 +8,7 @@ setuptools.setup(
     version="1.0",
     author="Ahmad Anondo",
     author_email="aanondos@gmail.com",
-    description="A package to create cli apps",
+    description="A library to create cli apps",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Anondo/pikli",

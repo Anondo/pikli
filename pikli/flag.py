@@ -44,6 +44,9 @@ class HelpFlag(object):
 
 
     def __show_usage(self):
+
+        """ Shows the command's usage on the terminal """
+
         print("\n\nUsage:")
         print("\t{} [args] [flags] [sub commands]".format(self.cmd.use))
 
