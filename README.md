@@ -69,16 +69,18 @@ root.add_command(serve)
 root.execute()
 
 ```
-The ```flags``` method of a ```Command``` returns the ```flag``` object that handles every flag related activity for the command. ```intp``` is a method of that object which creates an ```integer flag```.There is also ```stringp``` & ```boolp```. The first parameter is the name of the flag(used in the long version), the one is the usable name of the flag like, ```-p```. The third parameter is the default value for the flag. There is no default value for the bool flag. Its False by default. And the fourth one should be obvious, a description of the flag. Now lets use everything we have seen so far:<br/>
+The ```flags``` method of a ```Command``` returns the ```flag``` object that handles every flag related activity for the command. ```intp``` is a method of that object which creates an ```integer flag```.There is also ```stringp``` & ```boolp```. The first parameter is the name of the flag(used in the long version), the second one is the usable name of the flag like, ```-p```. The third parameter is the default value for the flag. There is no default value for the bool flag. Its False by default. And the fourth one should be obvious, a description of the flag. Now lets use everything we have seen so far:<br/>
 ```
 python main.py serve -p 8080
 ```
  <br/>
 The output should be: <br/>
+
 ```
 HTTP server running on port: 8080
 ```
 <br/>
+
 Executing the serve flag without the ```p``` flag will return the default value when ```pikli.get_int("port")``` is called which is a pikli core function used for retrieving the value of an integer flag. Similarly there are ```get_str``` & ```get_bool``` to get **string** & **bool** flag values.
 
 ### The Help Flag
