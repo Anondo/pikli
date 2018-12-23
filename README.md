@@ -81,7 +81,7 @@ HTTP server running on port: 8080
 ```
 <br/>
 
-Executing the serve flag without the ```p``` flag will return the default value when ```pikli.get_int("port")``` is called which is a pikli core function used for retrieving the value of an integer flag. Similarly there are ```get_str``` & ```get_bool``` to get **string** & **bool** flag values.
+Executing the serve command without the ```p``` flag will return the default value when ```pikli.get_int("port")``` is called which is a pikli core function used for retrieving the value of an integer flag. Similarly there are ```get_str``` & ```get_bool``` to get **string** & **bool** flag values.
 
 ### The Help Flag
 
