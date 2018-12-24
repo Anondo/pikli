@@ -149,3 +149,21 @@ root.execute()
 Here the **verbose** ```flag``` is assigned to the ```root command``` making this flag a global one. When assigning ```persistent flags```, don't forget to add all the ```sub commands``` at first.
 
 ### Args
+
+Apart from ```sub commands``` & ```flags``` normal arguments can be used in **pikli**. All that is needed is the ```args``` list that is used as the parameter of the ```run``` function. Lets see an example:<br/>
+
+```python
+import pikli
+
+def greet(args):
+    print("Hello {}, beef cheese delight rocks".format(args[0]))
+
+root = pikli.Command(use = "hello" , short = "hello is a greeting app",
+                     run = greet)
+
+root.execute()
+
+```
+<br/>
+
+Just keep the index order of the ```arguments``` right. The index number of the ```arguments``` doesn't bother about the ```flags```. For example  **``` python main.py -v "John Doe" ```** **pikli** will ignore the flags & count the ```argument``` **John Doe** as index 0 & so on.
