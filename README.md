@@ -74,8 +74,11 @@ The ```flags``` method of a ```Command``` returns the ```flag``` object that han
 python main.py serve -p 8080
 ```
  <br/>
+
  or
+
  <br/>
+
  ```
  python main.py serve --port=8080
  ```
@@ -116,7 +119,7 @@ Flags:
 
 ### The Persistent Flag
 
-**Pikli** provides support for ```persistent flags```. ```Persistent flags``` are like normal ```flags``` except if you assign it to a ```command``` it automatically gets assigned to every child it has upto to the bottom of the ```command``` tree. So if a ```persistent flag``` is assigned to the ```root command``` then every ```command``` will get that ```flag```. <br/>
+**Pikli** provides support for ```persistent flags```. ```Persistent flags``` are like normal ```flags``` except if you assign it to a ```command``` it automatically gets assigned to every child it has upto the bottom of the ```command``` tree. So if a ```persistent flag``` is assigned to the ```root command``` then every ```command``` will get that ```flag```. <br/>
 
 ```python
 import pikli
@@ -143,6 +146,6 @@ root.persistent_flags().boolp("verbose" , "v" , "shows details regarding the ope
 root.execute()
 
 ```
-Here the **verbose** ```flag``` is assigned to the ```root command``` making this flag a global one. When assigning ```persistent flags```, don't forget to add all the ```sub commands``` at first. 
+Here the **verbose** ```flag``` is assigned to the ```root command``` making this flag a global one. When assigning ```persistent flags```, don't forget to add all the ```sub commands``` at first.
 
 ### Args
