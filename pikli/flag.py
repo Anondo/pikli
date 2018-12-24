@@ -18,7 +18,7 @@
 
 
 import sys
-from .core import add_flag
+from .core import add_flag , set_flag_val
 
 
 
@@ -284,6 +284,7 @@ class Flag(object):
         else:
             flag.default = value # TODO: a value parameter is provided for BoolPFlag, but the asisgned value is always True. Need to think about it
 
+        set_flag_val(flag , value)
 
     def show_flag_details(self , help):
 

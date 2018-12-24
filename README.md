@@ -1,10 +1,10 @@
-Pikli: Library For CLI Apps
+Pikli: Library For Making CLI Apps
 ==================
 
 [![License](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/Anondo/pikli/blob/master/LICENSE)
 [![Project status](https://img.shields.io/badge/version-1.0-green.svg)](https://github.com/Anondo/pikli/releases)
 
-A simple python library to build command-line interfaces. Very heavily inspired by [Cobra](https://github.com/spf13/cobra.git).
+A simple python library to build command-line interfaces. Heavily inspired by [Cobra](https://github.com/spf13/cobra.git).
 
 ## Installing
 
@@ -74,6 +74,12 @@ The ```flags``` method of a ```Command``` returns the ```flag``` object that han
 python main.py serve -p 8080
 ```
  <br/>
+ or
+ <br/>
+ ```
+ python main.py serve --port=8080
+ ```
+ <br/>
 The output should be: <br/>
 
 ```
@@ -85,6 +91,58 @@ Executing the serve command without the ```p``` flag will return the default val
 
 ### The Help Flag
 
+**Pikli** provides an automatic help flag generation & recognition. Whenever a ```command``` without a ```run``` function is executed, the ```help``` flag will be executed autmatically. Or, it can be explicitly mentioned like any other flag like ```-h``` or ```--help```. Try: <br/>
+```
+python main.py serve --help
+```
+<br/>
+
+Simply running ```python main.py``` will trigger its help flag as it has no ```run``` function. A help flag should display something similar: <br/>
+```
+hello is a cli app
+
+
+Usage:
+	hello [args] [flags] [sub commands]
+
+
+Available Commands:
+serve            starts the http server
+
+
+Flags:
+-h, --help                Shows info regarding the command
+```
+
 ### The Persistent Flag
+
+**Pikli** provides support for ```persistent flags```. ```Persistent flags``` are like normal ```flags``` except if you assign it to a ```command``` it automatically gets assigned to every child it has upto to the bottom of the ```command``` tree. So if a ```persistent flag``` is assigned to the ```root command``` then every ```command``` will get that ```flag```. <br/>
+
+```python
+import pikli
+
+def start_server(args):
+  if pikli.get_bool("verbose"):
+      print("showing details")
+  print("HTTP server running on port: {}".format(pikli.get_int("port")))
+
+
+root = pikli.Command(use = "hello" , short = "hello is a cli app")
+
+serve = pikli.Command(use = "serve" , short = "starts the http server",
+
+                      run = start_server
+        )
+
+serve.flags().intp("port" , "p" , 8000 , "the port on which the server runs")
+
+root.add_command(serve)
+
+root.persistent_flags().boolp("verbose" , "v" , "shows details regarding the operation")
+
+root.execute()
+
+```
+Here the **verbose** ```flag``` is assigned to the ```root command``` making this flag a global one. When assigning ```persistent flags```, don't forget to add all the ```sub commands``` at first. 
 
 ### Args
