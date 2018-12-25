@@ -161,9 +161,46 @@ def greet(args):
 root = pikli.Command(use = "hello" , short = "hello is a greeting app",
                      run = greet)
 
+root.persistent_flags().boolp("verbose" , "v" , "shows details regarding the operation")
+
 root.execute()
 
 ```
 <br/>
 
-Just keep the index order of the ```arguments``` right. The index number of the ```arguments``` doesn't bother about the ```flags```. For example  **``` python main.py -v "John Doe" ```** **pikli** will ignore the flags & count the ```argument``` **John Doe** as index 0 & so on.
+Just keep the index order of the ```arguments``` right. The index number of the ```arguments``` doesn't bother about the ```flags```. For example  **``` python main.py -v "John Doe" ```** **pikli** will ignore the flags & count the ```argument``` **John Doe** as index 0 & so on. The output should be: <br/>
+
+```
+Hello John Doe, beef cheese delight rocks
+```
+
+### Env
+
+Lastly you can get the string or integer environmental variables using **pikli**. The two functions for this are ```get_str_env``` & ```get_int_env```: <br/>
+
+```python
+import pikli
+
+def greet(args):
+    print("Hello {}, beef cheese delight rocks".format(pikli.get_str_env("NAME")))
+
+root = pikli.Command(use = "hello" , short = "hello is a greeting app",
+                     run = greet)
+
+root.execute()
+
+```
+
+<br/>
+
+Run it like this: <br/>
+```
+NAME="John Doe" python main.py
+```
+
+## Contributing
+Totally open to suggestions. [See the contribution guide](https://github.com/Anondo/pikli/blob/master/CONTRIBUTING.md)
+
+## License
+
+Pikli is licensed under the [MIT License](https://github.com/Anondo/pikli/blob/master/LICENSE)
