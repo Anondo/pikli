@@ -18,7 +18,7 @@
 
 
 import sys
-from .core import add_flag
+from .core import add_flag , set_flag_val
 
 
 
@@ -38,8 +38,17 @@ class HelpFlag(object):
 
         self.__check_short()
         self.__check_long()
+        self.__show_usage()
         self.__check_available_commands()
         self.__check_available_flags()
+
+
+    def __show_usage(self):
+
+        """ Shows the command's usage on the terminal """
+
+        print("\n\nUsage:")
+        print("\t{} [args] [flags] [sub commands]".format(self.cmd.use))
 
 
     def __check_short(self):
@@ -234,6 +243,30 @@ class Flag(object):
 
         return None
 
+    def get_flag_by_name(self , flag_name):
+
+        """ returns the requested flag
+
+            Args:
+                flag_name (str): the name of the flag
+
+        """
+
+
+        for f in self.int_flags:
+            if flag_name == f.flag_name:
+                return f
+
+        for f in self.str_flags:
+            if flag_name == f.flag_name:
+                return f
+
+        for f in self.bool_flags:
+            if flag_name == f.flag_name:
+                return f
+
+        return None
+
     def assign_flag_value(self , flag , value):
 
         """ assigns value to the provided flag
@@ -251,6 +284,7 @@ class Flag(object):
         else:
             flag.default = value # TODO: a value parameter is provided for BoolPFlag, but the asisgned value is always True. Need to think about it
 
+        set_flag_val(flag , value)
 
     def show_flag_details(self , help):
 

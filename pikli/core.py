@@ -84,17 +84,40 @@ def add_flag(flag):
 
 
     if flag.get_type() == "int":
-        if get_int(flag.flag_name): #this is to prevent duplicate data
+        if get_int(flag.flag_name) != None: #this is to prevent duplicate data
             return
         int_flags.append(flag)
     elif flag.get_type() == "str":
-        if get_str(flag.flag_name):
+        if get_str(flag.flag_name) != None:
             return
         str_flags.append(flag)
     elif flag.get_type() == "bool":
-        if get_bool(flag.flag_name):
+        if get_bool(flag.flag_name) != None:
             return
         bool_flags.append(flag)
+
+def set_flag_val(flag , value):
+
+    """Sets value to the corresponding flag
+
+    Args:
+        flag (BaseP): the flag whose value is to be changed
+        value (type): the value of the flag
+
+    """
+
+    for f in int_flags:
+        if f.flag_name == flag.flag_name:
+            f.default = flag.default
+            return
+    for f in str_flags:
+        if f.flag_name == flag.flag_name:
+            f.default = flag.default
+            return
+    for f in bool_flags:
+        if f.flag_name == flag.flag_name:
+            f.default = flag.default
+            return
 
 
 #------------------------X---------------------------#

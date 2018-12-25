@@ -105,8 +105,8 @@ class Command(object):
 
             self.__check_sub_commands()
 
-        if not self.run and len(self.argv) == self.parents:#if nothing to run & no args
-            self.help_flag.execute() #then show help
+            if not self.run and len(self.argv) == 1:#if nothing to run & no args
+                self.help_flag.execute() #then show help
 
 
     def add_command(self , cmnd):
@@ -202,8 +202,8 @@ class Command(object):
         help_flag_found = False
         own_help_flag = True
 
-        for arg in self.argv[self.pos: ]:
-            if arg == "-h": #looking for any help flags
+        for arg in self.argv[1:]: #iterating from index 1 because, the first index is the command itself
+            if arg == "-h" or arg == "--help": #looking for any help flags
                 help_flag_found = True
                 self.argv.pop(self.argv.index(arg))
                 break
@@ -264,7 +264,7 @@ class Command(object):
         for i , arg in enumerate(self.argv):
             if self.__is_sub_command(arg):#if a sub command is detected
                 break   #then it means no more flags for this command
-            if arg[0] == "-": #every flag starts with -
+            if arg[0] == "-" and arg[0] != arg[1]: #every flag starts with -
                 flag = self.flag.get_flag(arg)
                 try:
                     assert (flag) , "Unknown flag '{}' for command '{}'".format(arg , self.use)
@@ -277,10 +277,58 @@ class Command(object):
                         self.__parse_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
                         break # break to stop the loop from iterating after recurssion occurs because its not needed
                     else:
-                        flag_list.append(self.flag_collection(arg , self.argv[i+1]))#assigning the flag with its value
+                        try:
+                            flag_list.append(self.flag_collection(arg , self.argv[i+1]))#assigning the flag with its value
+                        except IndexError: #if value is not provided for the flag
+                            print("Flag Error: Must provide a {} value for the flag '{}'".format(flag.get_type() , arg))
+                            self.argv.pop(i)
+                            continue
                         self.argv.pop(i)
-                        self.argv.pop(i) #after popping the value index becomes the current index
+                        self.argv.pop(i) #after popping, the value index becomes the current index
                         self.__parse_flags(flag_list)
+                        break
+
+    def __parse_long_flags(self , flag_list):
+        """
+
+           Parses the flags(long version) with along with their values from the argv list.
+
+           Args:
+                flag_list ([]flag_collection): a list of flag_collection
+
+        """
+
+        for i , arg in enumerate(self.argv):
+            if self.__is_sub_command(arg):#if a sub command is detected
+                break   #then it means no more flags for this command
+            if arg[0] == "-" and arg[1] == "-": #every flag starts with -
+
+                no_dash = arg[2:]
+                fname = ""
+                val = None
+                if "=" in no_dash:
+                    fname , val = no_dash.split("=")
+                else:
+                    fname = no_dash
+                flag = self.flag.get_flag_by_name(fname)
+                try:
+                    assert (flag) , "Unknown flag '{}' for command '{}'".format(arg , self.use)
+                except AssertionError as e:
+                    print("Flag Error: {}".format(e))
+                if flag:
+                    if flag.get_type() == "bool":
+                        flag_list.append(self.flag_collection(flag.flag_use , True))
+                        self.argv.pop(i)
+                        self.__parse_long_flags(flag_list)#recursion because, need to start looking for flags after pop occurs to get the right index numbers from enumerate
+                        break # break to stop the loop from iterating after recurssion occurs because its not needed
+                    else:
+                        try:
+                            assert (val) , "Must provide a {} value for the flag '{}'".format(flag.get_type() , fname)
+                            flag_list.append(self.flag_collection(flag.flag_use , val))#assigning the flag with its value
+                        except AssertionError as e:
+                            print("Flag Error: {}".format(e))
+                        self.argv.pop(i)
+                        self.__parse_long_flags(flag_list)
                         break
 
 
@@ -309,6 +357,7 @@ class Command(object):
         flags = []
 
         self.__parse_flags(flags)
+        self.__parse_long_flags(flags)
 
 
         return flags
