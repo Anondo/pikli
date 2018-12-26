@@ -109,7 +109,7 @@ class Command(object):
                 self.help_flag.execute() #then show help
 
 
-    def add_command(self , cmnd):
+    def add_command(self , *cmnd):
 
         """ Adds a sub command under the current command
 
@@ -130,8 +130,9 @@ class Command(object):
 
         """
 
-        cmnd.parent = self
-        self.commands.append(cmnd)
+        for cmd in cmnd:
+            cmd.parent = self
+            self.commands.append(cmd)
 
 
     def flags(self):
