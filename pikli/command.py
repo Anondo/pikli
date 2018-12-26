@@ -114,7 +114,7 @@ class Command(object):
         """ Adds a sub command under the current command
 
             Args:
-                cmnd (Command): the command to be added as the sub-command
+                *cmnd ([]Command): the list of command to be added as the sub-command
 
             Example:
                 root_command = pikli.Command(
