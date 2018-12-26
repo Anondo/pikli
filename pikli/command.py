@@ -109,12 +109,12 @@ class Command(object):
                 self.help_flag.execute() #then show help
 
 
-    def add_command(self , cmnd):
+    def add_command(self , *cmnd):
 
         """ Adds a sub command under the current command
 
             Args:
-                cmnd (Command): the command to be added as the sub-command
+                *cmnd ([]Command): the list of command to be added as the sub-command
 
             Example:
                 root_command = pikli.Command(
@@ -130,8 +130,9 @@ class Command(object):
 
         """
 
-        cmnd.parent = self
-        self.commands.append(cmnd)
+        for cmd in cmnd:
+            cmd.parent = self
+            self.commands.append(cmd)
 
 
     def flags(self):

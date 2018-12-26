@@ -1,8 +1,10 @@
 Pikli: Library For Making CLI Apps
 ==================
 
+[![Build Status](https://travis-ci.org/Anondo/pikli.svg?branch=master)](https://travis-ci.org/Anondo/pikli)
 [![License](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/Anondo/pikli/blob/master/LICENSE)
 [![Project status](https://img.shields.io/badge/version-1.0-green.svg)](https://github.com/Anondo/pikli/releases)
+[![dependencies Status](https://david-dm.org/dwyl/esta/status.svg)](https://david-dm.org/dwyl/esta)
 
 A simple python library to build command-line interfaces. Heavily inspired by [Cobra](https://github.com/spf13/cobra.git).
 
@@ -12,7 +14,7 @@ A simple python library to build command-line interfaces. Heavily inspired by [C
 pip install pikli
 ```
 
-## Usage
+## Getting Started
 
 Pikli is a command line parser. It parses the arguments provided on the command prompt & decides whether its a command or a flag or an argument for a command & acts accordingly. A command may have: Flags , Arguments & Sub Commands. In the following example:
 
@@ -22,7 +24,7 @@ Pikli is a command line parser. It parses the arguments provided on the command 
 
 import pikli
 
-def start_server(args):
+def start_server(arg):
   print("HTTP server running")
 
 root = pikli.Command(use = "hello" , short = "hello is a cli app")
@@ -39,7 +41,7 @@ root.execute()
 
 
 ```
-We have two commands ```root``` & ```serve```. ```root``` as its name suggests is the root command. This decision is made by providing a parent-child relationship. Its basically a tree like structure. And the commands which sits at the top of the tree is the root. The ```serve``` command is made a sub/child command of ```root``` by the ```add_command``` method of the ```Command``` class. And ```execute``` does exactly what it looks like, executes the command. Now onto the parameters provided while creating the objects:<br/>
+We have two commands ```root``` & ```serve```. ```root``` as its name suggests is the root command. This decision is made by providing a parent-child relationship. Its basically a tree like structure. And the commands which sits at the top of the tree is the root. The ```serve``` command is made a sub/child command of ```root``` by the ```add_command``` method of the ```Command``` class.The ```add_command``` method takes arbitrary amount of commands to add as a ```sub command```. And ```execute``` does exactly what it looks like, executes the command. Now onto the parameters provided while creating the objects:<br/>
 **```use```**: Determines the name of the command. Mandatory.<br/>
 **```short```**: A short description of the command.<br/>
 **```long```**: A long description of the command.<br/>
@@ -52,7 +54,7 @@ Flags are extra options used with a command. For example: ```git commit -m "Init
 ```python
 import pikli
 
-def start_server(args):
+def start_server(arg):
   print("HTTP server running on port: {}".format(pikli.get_int("port")))
 
 root = pikli.Command(use = "hello" , short = "hello is a cli app")
@@ -124,7 +126,7 @@ Flags:
 ```python
 import pikli
 
-def start_server(args):
+def start_server(arg):
   if pikli.get_bool("verbose"):
       print("showing details")
   print("HTTP server running on port: {}".format(pikli.get_int("port")))
@@ -150,13 +152,13 @@ Here the **verbose** ```flag``` is assigned to the ```root command``` making thi
 
 ### Args
 
-Apart from ```sub commands``` & ```flags``` normal arguments can be used in **pikli**. All that is needed is the ```args``` list that is used as the parameter of the ```run``` function. Lets see an example:<br/>
+Apart from ```sub commands``` & ```flags``` normal arguments can be used in **pikli**. All that is needed is the ```arg``` list that is used as the parameter of the ```run``` function. Lets see an example:<br/>
 
 ```python
 import pikli
 
-def greet(args):
-    print("Hello {}, beef cheese delight rocks".format(args[0]))
+def greet(arg):
+    print("Hello {}, beef cheese delight rocks".format(arg[0]))
 
 root = pikli.Command(use = "hello" , short = "hello is a greeting app",
                      run = greet)
@@ -181,7 +183,7 @@ Lastly you can get the string or integer environmental variables using **pikli**
 ```python
 import pikli
 
-def greet(args):
+def greet(arg):
     print("Hello {}, beef cheese delight rocks".format(pikli.get_str_env("NAME")))
 
 root = pikli.Command(use = "hello" , short = "hello is a greeting app",
