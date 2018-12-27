@@ -41,11 +41,11 @@ root.execute()
 
 
 ```
-We have two commands ```root``` & ```serve```. ```root``` as its name suggests is the root command. This decision is made by providing a parent-child relationship. Its basically a tree like structure. And the commands which sits at the top of the tree is the root. The ```serve``` command is made a sub/child command of ```root``` by the ```add_command``` method of the ```Command``` class.The ```add_command``` method takes arbitrary amount of commands to add as a ```sub command```. And ```execute``` does exactly what it looks like, executes the command. Now onto the parameters provided while creating the objects:<br/>
+We have two commands ```root``` & ```serve```. ```root``` as its name suggests is the root command. This decision is made by providing a parent-child relationship. Its basically a tree like structure. And the command which sits at the top of the tree is the root. The ```serve``` command is made a sub/child command of ```root``` by the ```add_command``` method of the ```Command``` class.The ```add_command``` method takes arbitrary amount of commands to add as a ```sub command```. And ```execute``` does exactly what it looks like, executes the command. Now onto the parameters provided while creating the objects:<br/>
 **```use```**: Determines the name of the command. Mandatory.<br/>
 **```short```**: A short description of the command.<br/>
 **```long```**: A long description of the command.<br/>
-**```run```**: The function which is triggered when the ```execute``` method of a command is called. There is a thing to remember about the ```run``` funtion. The function which is to be used as the ```run``` function(in this case **start_server**), **must have a single parameter which will be used as a list under the hood**.
+**```run```**: The function which is triggered when the ```execute``` method of a command is called. There is a thing to remember about the ```run``` funtion. The function which is to be used as the ```run``` function(in this case **start_server**), **must have a single parameter which will be used as a list.**.
 
 ### Flags
 
