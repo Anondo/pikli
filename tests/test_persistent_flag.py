@@ -126,7 +126,7 @@ class TestPersistentFlag(unittest.TestCase):
         root = pikli.Command(use = "root" , short = "this is the root command",
                              run = run_func)
 
-        child1 = pikli.Command(use = "chil1" , short = "the child1 command",
+        child1 = pikli.Command(use = "child1" , short = "the child1 command",
                                run = run_func)
 
         child2 = pikli.Command(use = "child2" , short = "the child2 command" ,
