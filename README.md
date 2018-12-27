@@ -4,7 +4,7 @@ Pikli: Library For Making CLI Apps
 [![Build Status](https://travis-ci.org/Anondo/pikli.svg?branch=master)](https://travis-ci.org/Anondo/pikli)
 [![License](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/Anondo/pikli/blob/master/LICENSE)
 [![Project status](https://img.shields.io/badge/version-1.0-green.svg)](https://github.com/Anondo/pikli/releases)
-[![dependencies Status](https://david-dm.org/dwyl/esta/status.svg)](https://david-dm.org/dwyl/esta)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
 A simple python library to build command-line interfaces. Heavily inspired by [Cobra](https://github.com/spf13/cobra.git).
 
