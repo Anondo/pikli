@@ -172,20 +172,20 @@ class Command(object):
 
         """
 
-            Determines if the argument provided is a sub-command or not
+            Determines if the argument provided is a sub-command & returns it if true
 
             Args:
                 arg (str): a command line argument
 
             Returns:
-                True/False (bool)
+                Command/None
 
         """
 
         for cmnd in self.commands:
             if arg == cmnd.use:
-                return True
-        return False
+                return cmnd
+        return None
 
     def __help_flag(self):
 
@@ -235,19 +235,13 @@ class Command(object):
 
         """ Checks for any sub commands from the cli for execution """
 
-        sub_command_provided = False
 
-        for arg in self.argv:
-            if self.__is_sub_command(arg):
-                sub_command_provided = True
+        for arg in self.argv[1:]:
+            cmnd = self.__is_sub_command(arg)
+            if cmnd:
+                cmnd.execute()
                 break
 
-        if self.commands and sub_command_provided: #if sub-command self.argv position is ok & sub-commands actually exists
-            for command in self.commands:
-                if command.use in self.argv: #if the sub-command.use is the command provided
-                    command.execute()
-                    return
-            print("Command Error: No such commands")
 
 
     def __parse_flags(self , flag_list):
