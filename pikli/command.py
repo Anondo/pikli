@@ -249,7 +249,7 @@ class Command(object):
 
         """
 
-           Parses the flags with along with their values from the argv list.
+           Parses the flags along with their values from the argv list.
 
            Args:
                 flag_list ([]flag_collection): a list of flag_collection
