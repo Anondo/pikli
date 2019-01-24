@@ -147,6 +147,78 @@ class TestFlag(unittest.TestCase):
        self.assertEqual(status , want_status , "status: Want {} Got {}".format(want_status , status))
        self.assertEqual(nothing , want_nothing , "Nothing: Want {} Got {}".format(want_nothing , nothing))
 
+    def test_list_flags(self):
+       """
+
+       Tests that the list flags of a/the command(s) are working along with the other flags
+
+       Command String:1. <script name>(root) -n Johnny assign --designation="Software Engineer"
+                                           -s "python"
+                      2. <script name>(root) -n Johnny assign --designation="Software Engineer"
+                                                          -s "Java"
+
+       """
+
+       def run_func(arg):
+           pass
+
+       skillset = []
+
+
+       sys.argv = sys.argv[:1]
+
+       root = pikli.Command(use = "root" , short = "the root command")
+
+       assign = pikli.Command(use = "assign" , short = "assigns the employee" ,
+                             run = run_func)
+
+       root.flags().stringp("name" , "n" , "A man has no name",  "Name of the employee")
+
+       assign.flags().stringp("designation" , "d" , "killer"  , "Designation of the employee")
+
+       assign.flags().listp(skillset , "skill" , "s" , "" ,"skillset of the employee")
+
+
+       root.add_command(assign)
+
+       sys.argv += ["-n" , "Johnny" , "assign" , "--designation=Software Engineer" , "-s" , "python"]
+
+
+       root.execute()
+
+
+       name = pikli.get_str("name")
+       designation = pikli.get_str("designation")
+
+       want_name = "Johnny"
+       want_designation = "Software Engineer"
+       want_skillset = ["python"]
+
+
+       self.assertEqual(name , want_name , "name: Want {} Got {}".format(want_name , name))
+       self.assertEqual(designation , want_designation , "designation: Want {} Got {}".format(want_designation , designation))
+       self.assertEqual(skillset , want_skillset , "skill: Want {} Got {}".format(want_skillset , skillset))
+
+
+       sys.argv = sys.argv[:1]
+       sys.argv += ["-n" , "Johnny" , "assign" , "--designation=Software Engineer" , "--skill=golang"]
+
+
+       root.execute()
+
+
+       name = pikli.get_str("name")
+       designation = pikli.get_str("designation")
+
+       want_name = "Johnny"
+       want_designation = "Software Engineer"
+       want_skillset = ["python" , "golang"]
+
+
+       self.assertEqual(name , want_name , "name: Want {} Got {}".format(want_name , name))
+       self.assertEqual(designation , want_designation , "designation: Want {} Got {}".format(want_designation , designation))
+       self.assertEqual(skillset , want_skillset , "skill: Want {} Got {}".format(want_skillset , skillset))
+
 
 
 

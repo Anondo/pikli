@@ -160,6 +160,25 @@ class BoolPFlag(BaseP):
     def __init__(self , flag_name , flag_use , default = False , description = ""):
         super(BoolPFlag , self).__init__(flag_name , flag_use , bool(default) , description , "bool")
 
+class ListPFlag(BaseP):
+
+    """
+
+        Inherits the BaseP class.
+
+        Appends to the list provided by the user. If default is provided it gets appended.
+
+    """
+
+    def __init__(self , thelist , flag_name , flag_use , default = None , description = ""):
+        self.thelist = thelist
+
+        if default:
+            self.thelist.append(default)
+
+        super(ListPFlag , self).__init__(flag_name , flag_use , default , description , "list")
+
+
 class Flag(object):
 
     """
@@ -174,6 +193,8 @@ class Flag(object):
 
             bool_flags ([]BoolPFlag): list of BoolPFlags for the command
 
+            list_flags ([]ListPFlag): list of ListPFlags for the command
+
 
     """
 
@@ -181,6 +202,7 @@ class Flag(object):
         self.int_flags = []
         self.str_flags = []
         self.bool_flags = []
+        self.list_flags = []
 
 
 
@@ -217,6 +239,17 @@ class Flag(object):
         self.bool_flags.append(bool_flag)
         add_flag(bool_flag)
 
+    def listp(self , thelist , flagname , flaguse , default , description):
+        """ creates a list flag for the command
+            which will append to the list provided by the user
+
+            See help(pikli.flag.ListPFlag) for the arguments
+
+        """
+
+        list_flag = ListPFlag(thelist , flagname , "-" + flaguse , default , description)
+        self.list_flags.append(list_flag)
+
 
 
     def get_flag(self , flag_use):
@@ -238,6 +271,10 @@ class Flag(object):
                 return f
 
         for f in self.bool_flags:
+            if flag_use == f.flag_use:
+                return f
+
+        for f in self.list_flags:
             if flag_use == f.flag_use:
                 return f
 
@@ -265,6 +302,10 @@ class Flag(object):
             if flag_name == f.flag_name:
                 return f
 
+        for f in self.list_flags:
+            if flag_name == f.flag_name:
+                return f
+
         return None
 
     def assign_flag_value(self , flag , value):
@@ -281,6 +322,8 @@ class Flag(object):
 
         if flag.get_type() == "int":
             flag.default = int(value)
+        elif flag.get_type() == "list":
+            flag.thelist.append(value)
         else:
             flag.default = value # TODO: a value parameter is provided for BoolPFlag, but the asisgned value is always True. Need to think about it
 

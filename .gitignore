@@ -1,3 +1,6 @@
 #Byte-compiled
 __pycache__/
 *.pyc
+
+#the main file to test during development
+main.py
